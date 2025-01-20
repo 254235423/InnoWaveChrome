@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InnoWaveChrome</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            transition: background 0.5s;
+        }
+        h1 {
+            font-size: 48px;
+        }
+        input {
+            width: 700px;
+            height: 40px;
+            border-radius: 30px;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .settings-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            font-size: 24px;
+        }
+        .settings-menu {
+            position: fixed;
+            right: -350px; /* Скрываем меню за пределами экрана */
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+            transition: right 0.3s; /* Плавный переход */
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            color: black; /* Черный текст */
+        }
+        .settings-menu.active {
+            right: 0; /* Показываем меню */
+        }
+        .theme-option {
+            margin: 10px 0;
+            cursor: pointer;
+            color: #333;
+        }
+        .theme-option:hover {
+            text-decoration: underline;
+        }
+        .close-button {
+            margin-top: 10px; /* Сдвигаем кнопку вниз */
+            background-color: #ff4e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Arial', sans-serif;
+        }
+        .close-button:hover {
+            background-color: #ff6a00;
+        }
+        #themeList {
+            display: none; /* Скрываем темы по умолчанию */
+        }
+        #settingsContent {
+            display: block; /* Показываем содержимое настроек по умолчанию */
+        }
+        @media (max-width: 769px) {
+            h1 {
+                font-size: 25px;
+            }
+            input {
+                width: 250px;
+                height: 20px;
+                font-size: 12px;
+            }
+            .settings-button {
+                font-size: 15pt;
+                height: 50px;
+                width: 50px;
+            }
+            .settings-menu {
+                text-align: left;
+                width: 300px;
+            }
+            .settingsContent {
+                margin: 30px;
+            }
+            .close-button {
+                margin: 30px;
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>InnoWaveChrome</h1>
+        <input placeholder="Введите поисковый запрос или URL">
+    </div>
+    
+    <button class="settings-button" onclick="toggleMenu()">⚙️</button>
+    
+    <div class="settings-menu" id="settingsMenu" onclick="closeMenu()">
+        <div class="settingsContent" id="settingsContent">
+            <h2>Настройки</h2>
+            <h3>1. Авторизация</h3>
+            <h3>2. Менеджер паролей</h3>
+            <h3 onclick="showThemes()">3. Тема</h3>
+            <h3>4. Конфиденциальность и безопасность</h3>
+            <h3>5. Проверка безопасности</h3>
+            <h3>6. Уведомления</h3>
+        </div>
+        <div class="settingsContent" id="themeList">
+            <h3>Выберите тему:</h3>
+        </div>
+        <button class="close-button" onclick="toggleMenu()">Закрыть</button>
+    </div>
+
+    <script>
+        const themes = [
+            { name: 'Тема 1', gradient: 'linear-gradient(135deg, #6a11cb, #2575fc)' },
+            { name: 'Тема 2', gradient: 'linear-gradient(135deg, #ff7e5f, #feb47b)' },
+            { name: 'Тема 3', gradient: 'linear-gradient(135deg, #00c6ff, #0072ff)' },
+            { name: 'Тема 4', gradient: 'linear-gradient(135deg, #f9d423, #ff4e50)' },
+            { name: 'Тема 5', gradient: 'linear-gradient(135deg, #ff6a00, #ee0979)' },
+            { name: 'Тема 6', gradient: 'linear-gradient(135deg, #ff0844, #ffb199)' },
+            { name: 'Тема 7', gradient: 'linear-gradient(135deg, #00d2ff, #3a7bd5)' },
+            { name: 'Тема 8', gradient: 'linear-gradient(135deg, #1c92f2, #f2fcfe)' },
+            { name: 'Тема 9', gradient: 'linear-gradient(135deg, #ff758c, #ff7eb3)' },
+            { name: 'Тема 10', gradient: 'linear-gradient(135deg, #c2e9fb, #a1c4fd)' }
+        ];
+
+        const body = document.body;
+        const settingsMenu = document.getElementById('settingsMenu');
+        const themeList = document.getElementById('themeList');
+        const settingsContent = document.getElementById('settingsContent');
+
+        // Функция для переключения меню
+        function toggleMenu() {
+            settingsMenu.classList.toggle('active');
+        }
+
+        // Закрытие меню при клике вне его
+        function closeMenu(event) {
+            if (!settingsMenu.contains(event.target)) {
+                toggleMenu(); // Закрываем меню
+            }
+        }
+
+        // Показываем темы
+        function showThemes() {
+            settingsContent.style.display = 'none'; // Скрываем содержимое настроек
+            themeList.style.display = 'block'; // Показываем темы
+
+            // Очищаем предыдущие темные кнопки
+            themeList.innerHTML = '<h3>Выберите тему:</h3>';
+            createThemeButtons(); // Создаем кнопки тем
+        }
+
+        // Функция для создания кнопок выбора тем
+        function createThemeButtons() {
+            themes.forEach(theme => {
+                const button = document.createElement('div');
+                button.className = 'theme-option';
+                button.textContent = theme.name;
+                button.onclick = () => selectTheme(theme.gradient);
+                themeList.appendChild(button);
+            });
+        }
+
+        // Функция для выбора темы
+        function selectTheme(gradient) {
+            body.style.background = gradient;
+            localStorage.setItem('theme', gradient); // Сохраняем выбранную тему в localStorage
+        }
+
+        // Загружаем сохраненную тему из localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.style.background = savedTheme;
+            } else {
+                body.style.background = themes[0].gradient; // Устанавливаем тему по умолчанию
+            }
+        }
+
+        // Загружаем темы при загрузке страницы
+        window.onload = () => {
+            loadTheme();
+        };
+    </script>
+</body>
+</html>
